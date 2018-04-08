@@ -1,0 +1,89 @@
+---
+- name: Multi purpose EC2 playbook - use the create or delete tag
+  hosts: localhost
+  gather_facts: False
+  vars:
+    vm_count: 3
+    subnet_id: 'subnet-b17d91d4'
+
+  tasks:
+  # https://aws.amazon.com/ec2/instance-types/
+  # https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-types.html
+  - name: Create RHEL instance in ec2
+    ec2:
+      #image: "{{ ami_find.results[0].ami_id }}"
+      image: ami-1987757b 
+      instance_type: t2.micro
+      aws_access_key: "{{ my_aws_access_key }}"
+      aws_secret_key: "{{ my_aws_secret_key }}"
+      key_name: ssh
+      region: 'ap-southeast-2'
+      wait: yes 
+      count: "{{ vm_count|int }}"
+      instance_tags:
+        Ansible: rjh 
+      vpc_subnet_id: "{{ subnet_id }}"
+      assign_public_ip: yes
+      group: default 
+    register: ec2
+    tags: create
+
+  - name: Wait for SSH to come up
+    wait_for:
+      host: "{{ item.public_dns_name }}"
+      port: 22
+      delay: 60
+      timeout: 320
+      state: started
+    with_items: "{{ ec2.instances }}"
+    tags: create
+
+  - name: Enumerate all tagged instances in ec2
+    ec2_instance_facts:
+      region: 'ap-southeast-2'
+      filters:
+        "tag:Ansible": rjh 
+    register: vmfacts 
+    tags: delete  
+
+  - debug: msg="{{ item.instance_id }}"
+    with_items: '{{ vmfacts.instances }}'
+    tags: delete 
+
+  - name: Delete ami instance in ec2
+    ec2:
+      aws_access_key: "{{ my_aws_access_key }}"
+      aws_secret_key: "{{ my_aws_secret_key }}"
+      region: 'ap-southeast-2'
+      state: absent
+      instance_ids: '{{ item.instance_id }}'
+    with_items: '{{ vmfacts.instances }}'
+    tags: delete 
+
+# --- #
+#  - name: list security groups
+#    ec2_group_facts:
+#      region: 'ap-southeast-2'
+#      aws_access_key: ''
+#      aws_secret_key: ''
+#    register: sgfacts
+
+#  - debug: msg="{{ sgfacts.security_groups }}"
+
+#  - name: Find AMI image 
+#    ec2_ami_find:
+#      name: "ubuntu/images/ebs/ubuntu-trusty-14.04-amd64-server-*"
+#      aws_access_key: "{{ my_aws_access_key }}" 
+#      aws_secret_key: "{{ my_aws_secret_key }}" 
+#      region: 'ap-southeast-2'
+#      is_public: True 
+#      hypervisor: xen 
+      #owner: 099720109477
+#      sort: name
+#      sort_order: descending
+#      sort_end: 10
+#    register: ami_find
+
+
+#  - debug: msg="{{ ami_find.results[0].ami_id }}"
+#  - debug: msg="{{ ami_find.results }}"

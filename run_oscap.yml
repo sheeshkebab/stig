@@ -1,0 +1,32 @@
+- hosts: tag_Ansible_rjh
+
+  vars:
+    oscap_profile: xccdf_org.ssgproject.content_profile_stig-rhel7-disa
+    oscap_policy: ssg-rhel7-ds
+
+  tasks:
+
+  - name: install openscap scanner
+    package:
+      name: "{{ item }}"
+      state: latest
+    with_items:
+    - openscap-scanner
+    - scap-security-guide
+
+  - block:
+    - name: run openscap
+      command: oscap xccdf eval \
+        --profile {{ oscap_profile }} \
+        --results-arf /tmp/oscap-arf.xml \
+        --report /tmp/oscap-report.html \
+        --fetch-remote-resources \
+        /usr/share/xml/scap/ssg/content/{{ oscap_policy }}.xml
+      ignore_errors: yes
+
+    always:
+    - name: download report
+      fetch:
+        src: /tmp/oscap-report.html
+        dest: /var/tmp/oscap-reports/{{ inventory_hostname }}.html
+        flat: yes

@@ -1,0 +1,10 @@
+---
+- hosts: all
+  tasks:
+  - name: Test jinjatemplate
+    template:
+      src: environment.j2
+      dest: /etc/ansible/facts.d/environment.fact
+      owner: root 
+      group: root 
+      mode: 0644

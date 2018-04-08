@@ -1,0 +1,17 @@
+foo ansible_connection=ssh ansible_ssh_host=localhost ansible_ssh_port=2230
+
+[linux]
+54.153.239.176 ansible_connection=ssh
+#13.210.208.178 ansible_connection=ssh
+#13.211.154.225 ansible_connection=ssh
+
+[windows]
+1.1.1.1
+2.2.2.2
+
+
+[myhosts:children]
+linux
+windows
+
+

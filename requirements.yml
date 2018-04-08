@@ -1,0 +1,4 @@
+- src: https://github.com/MindPointGroup/RHEL7-CIS.git
+
+
+# ansible-galaxy install -p roles -r requirements.yml
