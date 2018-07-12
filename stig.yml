@@ -1,4 +1,4 @@
-- hosts: tag_Ansible_rjh
+- hosts: all 
   roles:
     - role: RHEL7-STIG
       when:
