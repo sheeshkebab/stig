@@ -19,7 +19,7 @@
       - always
 
 - name: Run CAT I audits
- include: audit-cat1.yml
+  include: audit-cat1.yml
   static: no
   check_mode: no
   when: rhel7stig_cat1_audit | bool
