@@ -699,8 +699,8 @@
       yum:
           name: yum-cron
           state: "{{ (rhel7stig_auto_package_updates.enabled) | ternary('present','absent')}}"
-          enablerepo: "{{ (ansible_distribution == 'RedHat') | ternary('rhui-REGION-rhel-server-optional','') }}"
-          #enablerepo: "{{ (ansible_distribution == 'RedHat') | ternary('rhel-7-server-optional-rpms','') }}"
+          #enablerepo: "{{ (ansible_distribution == 'RedHat') | ternary('rhui-REGION-rhel-server-optional','') }}"
+          enablerepo: "{{ (ansible_distribution == 'RedHat') | ternary('rhel-7-server-optional-rpms','') }}"
 
     - name: "MEDIUM | RHEL-07-020260 | PATCH | Vendor packaged system security patches and updates must be installed and up to date. | Verify yum-cron config file exists"
       stat:
