@@ -1,8 +1,9 @@
-- hosts: tag_Ansible_rjh
+- hosts: stig 
 
   vars:
     oscap_profile: xccdf_org.ssgproject.content_profile_stig-rhel7-disa
     oscap_policy: ssg-rhel7-ds
+    directory: before
 
   tasks:
 
@@ -28,5 +29,5 @@
     - name: download report
       fetch:
         src: /tmp/oscap-report.html
-        dest: /var/tmp/oscap-reports/{{ inventory_hostname }}.html
+        dest: /var/tmp/oscap-reports/{{ directory }}/{{ inventory_hostname }}.html
         flat: yes
