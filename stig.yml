@@ -1,4 +1,4 @@
-- hosts: stig
+- hosts: tag_ansible_group_stig
   roles:
     - role: RHEL7-STIG
       when:
