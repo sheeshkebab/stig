@@ -1,0 +1,7 @@
+- name: Insights PLaybook
+  hosts: tag_ansible_group_stig 
+  gather_facts: no
+  roles:
+  - role: redhataccess.redhat-access-insights-client
+    insights_display_name: "{{ inventory_hostname }}"
+    when: ansible_os_family == 'RedHat'

@@ -1,0 +1,69 @@
+---
+- hosts: tag_ansible_group_stig 
+  become: yes
+  gather_facts: yes
+  vars:
+    #rhsm_hostname: subscription.rhsm.redhat.com
+    #rhsm_prefix: '/subscription'
+    #rhsm_baseurl: 'https://cdn.redhat.com'
+    mylablogin: 'gecos'
+    rhnlogin: 'sourced-via-tower-credentials'
+    vault_subscription_manager_password: 'sourced-via-tower-credentials'
+  tasks:
+
+  - name: set the correct timezone
+    file:
+      src: /usr/share/zoneinfo/Australia/Sydney
+      dest: /etc/timezone
+      state: link
+
+  - name: Check if we are on an EC2 instance..?
+    uri:
+      url: http://169.254.169.254/latest/meta-data/public-ipv4/
+      return_content: yes
+    register: webpage
+
+  - debug: var=webpage.msg
+  - debug: var=inventory_hostname
+
+  - name: Unregister via subscription-manager
+    command: /sbin/subscription-manager unregister
+    # when: amisubscribed.rc == 0
+
+  - name: Executing subscription-manager clean
+    command: /sbin/subscription-manager clean
+#    when: amisubscribed.rc != 0
+
+#  - name: put the rhsm configuration file in place
+#    template:
+#      src: templates/rhsm.conf.j2
+#      dest: /etc/rhsm/rhsm.conf
+#      owner: root
+#      group: root
+#      mode: 0644
+
+  - name: Subscribe the system using auto-attach.
+    redhat_subscription:
+      state: present
+      username: "{{ rhnlogin }}"
+      password: "{{ vault_subscription_manager_password }}"
+      auto_attach: true
+      force_register: yes
+
+  - name: Enable specific RHEL 7 subscription repos
+    command: /sbin/subscription-manager repos --enable={{ item }}
+    with_items:
+      - 'rhel-7-server-rpms'
+      - 'rhel-7-server-extras-rpms'
+      - 'rhel-7-server-rhn-tools-rpms'
+      - 'rhel-7-server-optional-rpms'
+
+  - name: Install yum-cron
+    yum:
+      name: yum-cron
+      state: latest
+
+  - name: Enable yum-cron
+    service:
+      name: yum-cron.service
+      state: started
