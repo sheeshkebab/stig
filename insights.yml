@@ -1,6 +1,6 @@
 - name: Insights PLaybook
   hosts: tag_ansible_group_stig 
-  gather_facts: no
+  gather_facts: yes 
   roles:
   - role: redhataccess.redhat-access-insights-client
     insights_display_name: "{{ inventory_hostname }}"
