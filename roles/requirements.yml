@@ -1,6 +1,6 @@
 # from GitHub
 - src: https://github.com/redhataccess/ansible-redhat-access-insights-client.git
-  name: redhataccess.redhat-access-insights-client
+  scm: git
 
 #- src: https://github.com/MindPointGroup/RHEL7-CIS.git
 # ansible-galaxy install -p roles -r requirements.yml
