@@ -26,13 +26,21 @@
   - debug: var=webpage.msg
   - debug: var=inventory_hostname
 
+
+  - name: Check if system is subscribed
+    command: /sbin/subscription-manager status
+    ignore_errors: yes
+    register: amisubscribed
+
+  - debug: var=amisubscribed
+
   - name: Unregister via subscription-manager
     command: /sbin/subscription-manager unregister
-    # when: amisubscribed.rc == 0
+    when: amisubscribed.rc == 0
 
   - name: Executing subscription-manager clean
     command: /sbin/subscription-manager clean
-#    when: amisubscribed.rc != 0
+    when: amisubscribed.rc != 0
 
 #  - name: put the rhsm configuration file in place
 #    template:
