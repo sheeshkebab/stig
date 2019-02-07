@@ -1,5 +1,5 @@
 - name: Insights PLaybook
-  hosts: tag_ansible_group_stig 
+  hosts: tag_ansible_group_stig, meta-tag_ansible_group_stig
   gather_facts: yes 
   vars:
     insights_display_name: "{{ inventory_hostname }}"
