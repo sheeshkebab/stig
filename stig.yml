@@ -37,7 +37,7 @@
       file:
         path: "{{ item }}"
         mode: 0644
-      with_items:
+      with_fileglob:
         - "/etc/ssh/*.pub"
       tags:
         - file_permissions_sshd_pub_key
