@@ -1,13 +1,13 @@
 - hosts: tag_ansible_group_stig,meta-tag_ansible_group_stig,foreman_hostgroup_demo
-  #roles:
-  #  - role: RHEL7-STIG
-  #    when:
-  #      - ansible_os_family == 'RedHat'
-  #      - ansible_distribution_major_version | version_compare('7', '=')
+  roles:
+    - role: RHEL7-STIG
+      when:
+        - ansible_os_family == 'RedHat'
+        - ansible_distribution_major_version | version_compare('7', '=')
   tasks:
-    - name: OpenSCAP copy and pasted rules 
+    - name: Extra Controls taken from the STIG OpenSCAP report 
       debug:
-        msg: "Running OpenSCAP content"
+        msg: "Extra OpenSCAP content"
 
 
     - name: Ensure kernel module 'usb-storage' is disabled
