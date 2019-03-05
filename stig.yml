@@ -1,6 +1,10 @@
 - hosts: tag_ansible_group_stig,meta-tag_ansible_group_stig,foreman_hostgroup_demo
   roles:
-    - role: RHEL7-STIG
-      when:
-        - ansible_os_family == 'RedHat'
-        - ansible_distribution_major_version | version_compare('7', '=')
+  #  - role: RHEL7-STIG
+  #    when:
+  #      - ansible_os_family == 'RedHat'
+  #      - ansible_distribution_major_version | version_compare('7', '=')
+  tasks:
+    - name: debug
+      debug:
+        msg: "Hello World"
