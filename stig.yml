@@ -1,11 +1,12 @@
 - name: STIG RHEL 7 profile configuration
   hosts: tag_ansible_group_stig,meta-tag_ansible_group_stig,foreman_hostgroup_demo 
+  become: true
 
-  roles:
-    - role: RHEL7-STIG
-      when:
-        - ansible_os_family == 'RedHat'
-        - ansible_distribution_major_version | version_compare('7', '=')
+  #roles:
+  #  - role: RHEL7-STIG
+  #    when:
+  #      - ansible_os_family == 'RedHat'
+  #      - ansible_distribution_major_version | version_compare('7', '=')
 
   tasks:
     - name: Extra Controls not implemented with the STIG content 
@@ -13,42 +14,3 @@
         msg: "Tasks for applying additonal content"
 
 
-    - name: Ensure kernel module 'usb-storage' is disabled
-      lineinfile:
-        create: yes
-        dest: "/etc/modprobe.d/{{item}}.conf"
-        regexp: '{{item}}'
-        line: "install {{item}} /bin/true"
-      with_items:
-        - usb-storage
-      tags:
-        - kernel_module_usb-storage_disabled
-        - medium_severity
-        - disable_strategy
-        - low_complexity
-        - medium_disruption
-        - CCE-27277-3
-        - NIST-800-53-AC-19(a)
-        - NIST-800-53-AC-19(d)
-        - NIST-800-53-AC-19(e)
-        - NIST-800-53-IA-3
-        - NIST-800-171-3.1.21
-        - DISA-STIG-RHEL-07-020100
-
-    - name: Ensure permission 0644 on /etc/ssh/*.pub
-      file:
-        path: "{{ item }}"
-        mode: 0644
-      with_fileglob:
-        - "/etc/ssh/*.pub"
-      tags:
-        - file_permissions_sshd_pub_key
-        - medium_severity
-        - configure_strategy
-        - low_complexity
-        - low_disruption
-        - CCE-27311-0
-        - NIST-800-53-AC-6
-        - NIST-800-171-3.1.13
-        - NIST-800-171-3.13.10
-        - DISA-STIG-RHEL-07-040410
